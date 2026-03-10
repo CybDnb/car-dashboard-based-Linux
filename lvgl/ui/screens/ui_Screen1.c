@@ -15,6 +15,9 @@ void ui_event_ledswitch(lv_event_t * e)
     if(event_code == LV_EVENT_PRESSED) {
         switch_led_event_func(e);
     }
+    if(event_code == LV_EVENT_VALUE_CHANGED){
+        printf("switch value: \n");
+    }
 }
 
 // build funtions
