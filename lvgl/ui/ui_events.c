@@ -4,8 +4,21 @@
 // Project name: SquareLine_Project
 
 #include "ui.h"
+#include "ui_include.h"
 
 void switch_led_event_func(lv_event_t * e)
 {
 	// Your code here
+	switch_led_event_cb(e);
+}
+
+void on_servo_switch_clicked(lv_event_t * e)
+{
+	// Your code here
+}
+
+void on_servo_button_clicked(lv_event_t * e)
+{
+	// Your code here
+	servo_button_event_cb(e);
 }

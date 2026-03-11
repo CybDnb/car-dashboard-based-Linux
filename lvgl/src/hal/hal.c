@@ -11,7 +11,7 @@ lv_display_t * drm_hal_init(const char * drm_card, const char * input_device)
     if(drm_card && drm_card[0])
     {
         printf("Using DRM card: %s\n", drm_card);
-        if(lv_linux_drm_set_file(disp, drm_card, 448) != LV_RESULT_OK) {
+        if(lv_linux_drm_set_file(disp, drm_card, -1) != LV_RESULT_OK) {
             return NULL;
         }
     }

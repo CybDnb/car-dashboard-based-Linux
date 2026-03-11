@@ -7,16 +7,27 @@
 
 lv_obj_t * ui_Screen1 = NULL;
 lv_obj_t * ui_ledswitch = NULL;
+lv_obj_t * ui_SG90Button = NULL;
+lv_obj_t * ui_Temp = NULL;
 // event funtions
 void ui_event_ledswitch(lv_event_t * e)
 {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-    if(event_code == LV_EVENT_PRESSED) {
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
         switch_led_event_func(e);
     }
-    if(event_code == LV_EVENT_VALUE_CHANGED){
-        printf("switch value: \n");
+}
+
+void ui_event_SG90Button(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_PRESSED) {
+        on_servo_button_clicked(e);
+    }
+    if(event_code == LV_EVENT_RELEASED) {
+        on_servo_button_clicked(e);
     }
 }
 
@@ -32,7 +43,27 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_height(ui_ledswitch, 105);
     lv_obj_set_align(ui_ledswitch, LV_ALIGN_CENTER);
 
+    ui_SG90Button = lv_btn_create(ui_Screen1);
+    lv_obj_set_width(ui_SG90Button, 84);
+    lv_obj_set_height(ui_SG90Button, 79);
+    lv_obj_set_x(ui_SG90Button, -262);
+    lv_obj_set_y(ui_SG90Button, 166);
+    lv_obj_set_align(ui_SG90Button, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_SG90Button, LV_OBJ_FLAG_SCROLL_ON_FOCUS);     /// Flags
+    lv_obj_clear_flag(ui_SG90Button, LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+
+    ui_Temp = lv_textarea_create(ui_Screen1);
+    lv_obj_set_width(ui_Temp, 150);
+    lv_obj_set_height(ui_Temp, 70);
+    lv_obj_set_x(ui_Temp, 186);
+    lv_obj_set_y(ui_Temp, 165);
+    lv_obj_set_align(ui_Temp, LV_ALIGN_CENTER);
+    lv_textarea_set_text(ui_Temp, "0");
+    lv_textarea_set_placeholder_text(ui_Temp, "Placeholder...");
+    lv_obj_set_style_text_font(ui_Temp, &lv_font_montserrat_40, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     lv_obj_add_event_cb(ui_ledswitch, ui_event_ledswitch, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_SG90Button, ui_event_SG90Button, LV_EVENT_ALL, NULL);
 
 }
 
@@ -43,5 +74,7 @@ void ui_Screen1_screen_destroy(void)
     // NULL screen variables
     ui_Screen1 = NULL;
     ui_ledswitch = NULL;
+    ui_SG90Button = NULL;
+    ui_Temp = NULL;
 
 }

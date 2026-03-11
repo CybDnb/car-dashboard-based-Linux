@@ -16,6 +16,9 @@ extern void ui_Screen1_screen_destroy(void);
 extern lv_obj_t * ui_Screen1;
 extern void ui_event_ledswitch(lv_event_t * e);
 extern lv_obj_t * ui_ledswitch;
+extern void ui_event_SG90Button(lv_event_t * e);
+extern lv_obj_t * ui_SG90Button;
+extern lv_obj_t * ui_Temp;
 // CUSTOM VARIABLES
 
 #ifdef __cplusplus

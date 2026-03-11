@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 void switch_led_event_func(lv_event_t * e);
+void on_servo_button_clicked(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/
