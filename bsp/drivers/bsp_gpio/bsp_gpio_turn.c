@@ -53,12 +53,11 @@ static void gpio_timer_handler(struct timer_list *timer)
     int value = 0;
     timer_owner_e tower;
     bool rerun = false;
-
     spin_lock_irqsave(&priv->lock, flags);
     value = priv->blink_value;
     tower = priv->towner;
 
-    if(tower == ALL_TURN_LED)
+    if(tower == ALL_TURN_LED )
         priv->blink_value = !priv->blink_value;
 
     if (priv->tstate == TIMER_RUN) {
@@ -97,16 +96,16 @@ static long gpio_turn_ioctl(struct file *file, unsigned int cmd, unsigned long a
     unsigned long data;
     unsigned long flags;
     long ret = 0;
-
     switch(cmd)
     {
         case GPIO_TURN_LEFT_SET:
         {
             if (copy_from_user(&data, (void __user *)arg, sizeof(data))){
+                printk(KERN_ERR "Failed to copy data from user space\n");
                 ret = -EFAULT;
                 goto fault;
             }
-                
+            printk(KERN_INFO "Setting left turn LED to %ld\n", data);
             spin_lock_irqsave(&priv->lock,flags);
             if(priv->towner == NONE_TURN_LED)
                 gpiod_set_value(priv->left_gpio,data);
@@ -119,7 +118,7 @@ static long gpio_turn_ioctl(struct file *file, unsigned int cmd, unsigned long a
                 ret = -EFAULT;
                 goto fault;
             }
-                
+            printk(KERN_INFO "Setting right turn LED to %ld\n", data);    
             spin_lock_irqsave(&priv->lock,flags);
             if(priv->towner == NONE_TURN_LED)
                 gpiod_set_value(priv->right_gpio,data);
@@ -212,13 +211,13 @@ static long gpio_turn_ioctl(struct file *file, unsigned int cmd, unsigned long a
                 ret = -EINVAL;
                 goto fault;
             }
-
             spin_lock_irqsave(&priv->lock,flags);
             if(priv->towner == NONE_TURN_LED){ 
                 priv->blink_value = 0;
                 priv->blink_delay_ms = data;
                 priv->towner = ALL_TURN_LED;
                 priv->tstate = TIMER_RUN;
+                printk(KERN_DEBUG "jiffies %ld,%p,%ld\n", jiffies,&priv->gtimer,priv->blink_delay_ms);
                 mod_timer(&priv->gtimer,jiffies + msecs_to_jiffies(priv->blink_delay_ms));          
             } 
             spin_unlock_irqrestore(&priv->lock,flags);
@@ -253,6 +252,12 @@ fault:
 }
 
 static int gpio_turn_release(struct inode *inode, struct file *file){
+    struct gpio_turn_priv *priv = file->private_data;
+    del_timer_sync(&priv->gtimer);
+    priv->towner = NONE_TURN_LED;
+    priv->tstate = TIMER_STOP;
+    priv->blink_delay_ms = 0;
+    priv->blink_value = 0;
     pr_info("gpio_turn release\n");
     return 0;
 }
